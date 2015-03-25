@@ -1,0 +1,45 @@
+import bpy # THIS IS A MUST TO IMPORT ALL BLENDER PYTHON MODULE
+import csv # IMPORT CSV MODULE
+
+# READ INPUT FILE
+
+file = csv.reader(open('/Users/MacTeo/Desktop/data.csv', newline=''), delimiter=',')
+
+curRow = [] #empty placeholder for current row
+
+for idx, row in enumerate(file):
+    if idx<38: # this is hard coded but you can use
+
+        curRow = row
+        
+        # PROCESS COLUMN ONE
+        # display first data index as string
+        bpy.ops.object.text_add(location=(0,idx,0), rotation=(0,0,0))
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.font.delete()
+        bpy.ops.font.text_insert(text=curRow[0])
+        bpy.ops.object.editmode_toggle()
+        
+        # PROCESS COLUMN TWO
+        # create cube and transform resize
+        bpy.ops.mesh.primitive_cube_add(view_align=False, enter_editmode=False, location=(0, 0, 0), rotation=(0, 0, 0))    
+
+        # store the location of current 3d cursor
+        saved_location = bpy.context.scene.cursor_location.copy()  # returns a copy of the vector
+        
+        # give 3dcursor new coordinates
+        bpy.context.scene.cursor_location = (0.0,0.0,-1.0)
+        
+        # set the origin on the current object to the 3dcursor location
+        bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+        
+        # set 3dcursor location back to the stored location
+        bpy.context.scene.cursor_location = saved_location
+        
+        
+        myScale = int(curRow[1]) 
+        
+        #bpy.ops.transform.resize(value=(0.5, 0.5, 0.5))
+        bpy.ops.transform.resize(value=(0.5, 0.5, myScale), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1, snap=False, snap_target='CLOSEST', snap_point=(0, 0, 0), snap_align=False, snap_normal=(0, 0, 0), texture_space=False, release_confirm=False)
+
+        bpy.ops.transform.translate(value=(5, idx, 0), constraint_axis=(False, False, False))
